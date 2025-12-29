@@ -11,18 +11,38 @@ import type {
 // 支援 Zeabur 部署 - 從環境變數取得 API URL
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
+// Zeabur 免費版有冷啟動問題，需要 retry 邏輯
+async function fetchWithRetry<T>(url: string, retries = 3, delay = 2000): Promise<T> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url);
+      if (response.status === 503 && i < retries - 1) {
+        // 503 表示服務正在喚醒，等待後重試
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+      return response.json();
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
-  return response.json();
+  throw new Error('Max retries reached');
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  return fetchWithRetry<T>(url);
 }
 
 export function useDashboardOverview() {
   return useQuery({
     queryKey: ['dashboard-overview'],
     queryFn: () => fetchJson<DashboardOverview>(`${API_BASE}/dashboard/overview`),
+    retry: 3,
+    retryDelay: 2000,
   });
 }
 
