@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/Layout';
 import { KOLDetailModal } from './components/KOLDetailModal';
+import { TourProvider } from './components/tour';
+import { dashboardTourSteps } from './config/tourSteps';
 import { DashboardPage } from './pages/DashboardPage';
 import { KOLsPage } from './pages/KOLsPage';
 import { CampaignsPage } from './pages/CampaignsPage';
@@ -53,7 +55,7 @@ function AppContent() {
   };
 
   return (
-    <>
+    <TourProvider steps={dashboardTourSteps}>
       <Layout currentPage={currentPage} onNavigate={handleNavigate}>
         {renderPage()}
       </Layout>
@@ -61,7 +63,7 @@ function AppContent() {
         kolId={selectedKOLId}
         onClose={() => setSelectedKOLId(null)}
       />
-    </>
+    </TourProvider>
   );
 }
 

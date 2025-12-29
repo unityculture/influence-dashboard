@@ -12,6 +12,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { useDashboardOverview, useCampaigns, useDataStories } from '../hooks/useApi';
+import { TourTrigger } from '../components/tour';
 import { KOLCard } from '../components/KOLCard';
 import { CampaignCard } from '../components/CampaignCard';
 import {
@@ -113,6 +114,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
     <div className="space-y-8">
       {/* Header */}
       <motion.div
+        data-tour-id="dashboard-header"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -129,11 +131,12 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <TourTrigger variant="icon" />
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-sm text-slate-300">即時數據更新</span>
           </div>
-          <Button variant="glow" onClick={() => onNavigate('stories')}>
+          <Button data-tour-id="view-stories-button" variant="glow" onClick={() => onNavigate('stories')}>
             <Volume2 className="w-4 h-4" />
             查看數據故事
           </Button>
@@ -141,7 +144,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
       </motion.div>
 
       {/* Hero Metrics - 4 cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+      <div data-tour-id="hero-metrics-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
         <MetricCard
           title="KOL 總數"
           value={overview?.total_kols || 0}
@@ -180,7 +183,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
       </div>
 
       {/* Secondary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+      <div data-tour-id="secondary-metrics" className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -258,7 +261,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div data-tour-id="charts-row" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {overview?.platform_distribution && (
           <ChartContainer
             title="平台分佈"
@@ -282,7 +285,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
 
       {/* Data Stories Preview */}
       {stories.length > 0 && (
-        <div>
+        <div data-tour-id="data-stories-preview">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-400" />
@@ -333,7 +336,7 @@ export function DashboardPage({ onNavigate, onSelectKOL, onSelectCampaign }: Das
 
       {/* Top KOLs */}
       {overview?.top_kols && (
-        <div>
+        <div data-tour-id="top-kols-section">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-semibold">頂尖 KOL</h2>
